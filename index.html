@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>个人计划表</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>每日完成内容总结</h2>
+    <p>date日期，times对抗自我次数，dowhat做了什么，tags对‘dowhat’的内容抽象</p>
+    <!-- 表格将显示在这里 -->
+    <div id="table-container"></div>
+
+    <script>
+        // 1. 静态定义表格数据（数组）
+        const tableData = [
+            { date: 3.3, times: 6, dowhat: '单词、英语、数学思维提升、安卓逆向', tags: '思维、逆向' },
+            { date: 3.4, times: 2, dowhat: '单词、英语', tags: '' },
+            { date: 3.5, times: 0, dowhat: '', tags: '' },
+            { date: 3.6, times: 0, dowhat: '', tags: '' },
+            { date: 3.7, times: 0, dowhat: '', tags: '' },
+            { date: 3.8, times: 0, dowhat: '', tags: '' },
+            { date: 3.9, times: 0, dowhat: '', tags: '' },
+            { date: 3.10, times: 0, dowhat: '', tags: '' },
+            { date: 3.11, times: 0, dowhat: '', tags: '' },
+            { date: 3.12, times: 0, dowhat: '', tags: '' },
+            { date: 3.13, times: 0, dowhat: '', tags: '' },
+            { date: 3.14, times: 0, dowhat: '', tags: '' },
+            { date: 3.15, times: 0, dowhat: '', tags: '' },
+            { date: 3.16, times: 0, dowhat: '', tags: '' },
+            { date: 3.17, times: 0, dowhat: '', tags: '' },
+            { date: 3.18, times: 0, dowhat: '', tags: '' },
+            { date: 3.19, times: 0, dowhat: '', tags: '' },
+            { date: 3.20, times: 0, dowhat: '', tags: '' },
+        ];
+
+        // 2. 生成表格的函数
+        function renderTable(data) {
+            // 如果数据为空，返回空
+            if (!data || data.length === 0) return '<p>暂无数据</p>';
+
+            // 获取所有列名（假设每个对象键相同，取第一个对象的键作为表头）
+            const columns = Object.keys(data[0]);
+
+            // 开始构建表格HTML
+            let html = '<table>\n';
+
+            // 添加表头
+            html += '  <thead>\n    <tr>\n';
+            columns.forEach(col => {
+                html += `      <th>${col}</th>\n`;
+            });
+            html += '    </tr>\n  </thead>\n';
+
+            // 添加表体
+            html += '  <tbody>\n';
+            data.forEach(row => {
+                html += '    <tr>\n';
+                columns.forEach(col => {
+                    html += `      <td>${row[col]}</td>\n`;
+                });
+                html += '    </tr>\n';
+            });
+            html += '  </tbody>\n';
+            html += '</table>';
+
+            return html;
+        }
+
+        // 3. 将生成的表格插入到页面
+        document.getElementById('table-container').innerHTML = renderTable(tableData);
+    </script>
+</body>
+</html>
