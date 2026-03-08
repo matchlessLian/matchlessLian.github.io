@@ -10,31 +10,37 @@
 </head>
 <body>
     <h2>每日完成内容总结</h2>
-    <p>date日期，times对抗自我次数，dowhat做了什么，tags对‘dowhat’的内容抽象</p>
+    <p> date：指日期；
+        times：对抗自我次数；
+        basis：是否完成了基础任务？基础任务是指英语的学习，前期涉及比如单词与听力，后期再进一步优化调整；
+        seewhat：指额外学习了什么，包括通过视频平台学习到的其他领域的科普、额外技能扩展、数学专业课等（学习时长>30min才会记录）；
+        dowhat：指额外做了什么，比如代码复刻、参加cf、嵌入式项目复刻等；
+        tags：标签化抽象总结额外做的事情，方便快速检索</p>
+    <p>在浏览器页面按'ctrl+f'即可快速搜索所有相关内容</p>
     <!-- 表格将显示在这里 -->
     <div id="table-container"></div>
 
     <script>
         // 1. 静态定义表格数据（数组）
         const tableData = [
-            { date: 3.3, times: 6, dowhat: '单词、英语、数学思维提升、安卓逆向', tags: '思维、逆向' },
-            { date: 3.4, times: 2, dowhat: '单词、英语', tags: '' },
-            { date: 3.5, times: 1, dowhat: '单词、英语、量子力学', tags: '物理' },
-            { date: 3.6, times: 0, dowhat: '', tags: '' },
-            { date: 3.7, times: 0, dowhat: '', tags: '' },
-            { date: 3.8, times: 0, dowhat: '', tags: '' },
-            { date: 3.9, times: 0, dowhat: '', tags: '' },
-            { date: 3.10, times: 0, dowhat: '', tags: '' },
-            { date: 3.11, times: 0, dowhat: '', tags: '' },
-            { date: 3.12, times: 0, dowhat: '', tags: '' },
-            { date: 3.13, times: 0, dowhat: '', tags: '' },
-            { date: 3.14, times: 0, dowhat: '', tags: '' },
-            { date: 3.15, times: 0, dowhat: '', tags: '' },
-            { date: 3.16, times: 0, dowhat: '', tags: '' },
-            { date: 3.17, times: 0, dowhat: '', tags: '' },
-            { date: 3.18, times: 0, dowhat: '', tags: '' },
-            { date: 3.19, times: 0, dowhat: '', tags: '' },
-            { date: 3.20, times: 0, dowhat: '', tags: '' },
+            { date: 3.3, times: 6, basis: 'yes', seewhat: '数学思维提升、安卓逆向', dowhat: '', tags: '思维、逆向' },
+            { date: 3.4, times: 2, basis: 'yes', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.5, times: 1, basis: 'yes', seewhat: '量子力学', dowhat: '', tags: '物理' },
+            { date: 3.6, times: '?', basis: 'yes', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.7, times: '?', basis: 'yes', seewhat: '电磁学', dowhat: '', tags: '物理' },
+            { date: 3.8, times: '?', basis: 'yes',  seewhat: '跟着粗读DS论文、物理学', dowhat: '', tags: 'AI、物理' },
+            { date: 3.9, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.10, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.11, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.12, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.13, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.14, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.15, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.16, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.17, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.18, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.19, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
+            { date: 3.20, times: 0, basis: '', seewhat: '', dowhat: '', tags: '' },
         ];
 
         // 2. 生成表格的函数
