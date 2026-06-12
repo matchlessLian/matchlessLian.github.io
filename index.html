@@ -1,0 +1,64 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="stylesheet" href="./styles/app.css" />
+</head>
+<body data-page="home">
+  <div class="app-shell">
+    <header class="site-nav">
+      <nav class="sidebar-nav" data-role="sidebar-nav"></nav>
+    </header>
+
+    <main class="content">
+      <div class="home-layout">
+        <div class="chart-column">
+          <section class="chart-card" data-mode-target="phone">
+            <header class="chart-head">
+              <div>
+                <img class="chart-title-image" src="./picture/刷手机时间的记录.png" alt="" data-role="phone-title-image" />
+              </div>
+              <div class="chart-controls">
+                <select class="month-select" data-role="phone-month" hidden></select>
+                <div class="mode-switch">
+                  <button type="button" class="mode-button is-active" data-mode="recent"></button>
+                  <button type="button" class="mode-button" data-mode="month"></button>
+                </div>
+              </div>
+            </header>
+            <div class="chart-panel" data-role="phone-chart"></div>
+          </section>
+
+          <section class="chart-card" data-mode-target="learning">
+            <header class="chart-head">
+              <div>
+                <img class="chart-title-image" src="./picture/学习时长的记录.png" alt="" data-role="learning-title-image" />
+              </div>
+              <div class="chart-controls">
+                <select class="month-select" data-role="learning-month" hidden></select>
+                <div class="mode-switch">
+                  <button type="button" class="mode-button is-active" data-mode="recent"></button>
+                  <button type="button" class="mode-button" data-mode="month"></button>
+                </div>
+              </div>
+            </header>
+            <div class="chart-panel" data-role="learning-chart"></div>
+          </section>
+        </div>
+
+        <aside class="reason-panel">
+          <img class="reason-image" src="./picture/为什么要记录这些.png" alt="" data-role="reason-image" />
+          <p data-role="reason-copy"></p>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="./scripts/strings.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+
+
