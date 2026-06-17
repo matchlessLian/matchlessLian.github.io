@@ -143,8 +143,9 @@
     target.innerHTML = '';
 
     for (const entry of entries) {
+      const statusValue = Number(entry[FIELD.scheduleStatus]);
       const item = document.createElement('article');
-      item.className = 'entry-item schedule-item';
+      item.className = `entry-item schedule-item ${getScheduleStateClass(statusValue)}`;
 
       const main = document.createElement('div');
       main.className = 'schedule-main';
@@ -155,7 +156,6 @@
       main.appendChild(name);
 
       const status = document.createElement('div');
-      const statusValue = Number(entry[FIELD.scheduleStatus]);
       status.className = `schedule-status ${getStatusClass(statusValue)}`;
       status.textContent = getStatusText(statusValue);
       main.appendChild(status);
@@ -171,9 +171,10 @@
       const beads = document.createElement('div');
       beads.className = 'progress-beads';
 
-      for (const progress of entry[FIELD.scheduleProgress] || []) {
+      const progressEntries = entry[FIELD.scheduleProgress] || [];
+      progressEntries.forEach((progress, index) => {
         const progressItem = document.createElement('div');
-        progressItem.className = 'progress-item';
+        progressItem.className = `progress-item${index === progressEntries.length - 1 ? ' is-latest' : ''}`;
 
         const date = document.createElement('div');
         date.className = 'progress-date fz-font';
@@ -186,7 +187,7 @@
         progressItem.appendChild(content);
 
         beads.appendChild(progressItem);
-      }
+      });
 
       progressWrap.appendChild(beads);
       main.appendChild(progressWrap);
@@ -257,6 +258,12 @@
     if (status === 1) return 'status--progress';
     if (status === 2) return 'status--done';
     return 'status--todo';
+  }
+
+  function getScheduleStateClass(status) {
+    if (status === 1) return 'schedule-item--progress';
+    if (status === 2) return 'schedule-item--done';
+    return 'schedule-item--todo';
   }
 
   function bindControls() {
@@ -375,6 +382,8 @@
 
     const wrapper = document.createElement('div');
     wrapper.className = 'chart-body';
+    const noteLayer = document.createElement('div');
+    noteLayer.className = 'note-marker-layer';
 
     const svg = createSvg('svg');
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -440,14 +449,27 @@
       bar.setAttribute('height', String(Math.max(barHeight, 2)));
       bar.setAttribute('class', `bar${showNoteLegend && item.note ? ' bar--note' : ''}`);
 
-      const titleNode = createSvg('title');
-      const tooltipLines = [formatDate(item.date), formatDuration(item.value)];
-      if (showNoteLegend) {
-        tooltipLines.push(item.note || STRINGS.emptyNoteLabel);
+      if (!showNoteLegend) {
+        const titleNode = createSvg('title');
+        titleNode.textContent = [formatDate(item.date), formatDuration(item.value)].join('\n');
+        bar.appendChild(titleNode);
       }
-      titleNode.textContent = tooltipLines.join('\n');
-      bar.appendChild(titleNode);
       svg.appendChild(bar);
+
+      if (showNoteLegend && item.note) {
+        const marker = document.createElement('div');
+        marker.className = 'note-marker';
+        marker.tabIndex = 0;
+        marker.style.left = `${((x + barWidth / 2) / width) * 100}%`;
+        marker.style.top = `${(y / height) * 100}%`;
+
+        const bubble = document.createElement('span');
+        bubble.className = 'note-bubble fz-font';
+        bubble.textContent = item.note;
+        marker.appendChild(bubble);
+
+        noteLayer.appendChild(marker);
+      }
 
       const tick = createSvg('text');
       tick.setAttribute('x', String(x + barWidth / 2));
@@ -460,6 +482,9 @@
     });
 
     wrapper.appendChild(svg);
+    if (noteLayer.childElementCount) {
+      wrapper.appendChild(noteLayer);
+    }
 
     target.appendChild(wrapper);
   }

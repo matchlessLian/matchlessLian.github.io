@@ -1,4 +1,4 @@
-@font-face {
+﻿@font-face {
   font-family: 'Mianfeiziti';
   src: url('../fonts/MIANFEIZITI.ttf') format('truetype');
   font-display: swap;
@@ -188,11 +188,13 @@ body[data-page='article'] .app-shell::before {
 }
 
 .chart-panel {
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .chart-body {
-  min-width: 720px;
+  position: relative;
+  min-width: 0;
+  overflow: visible;
 }
 
 .empty-state {
@@ -237,6 +239,63 @@ body[data-page='article'] .app-shell::before {
 
 .bar--note {
   fill: var(--bar-note);
+}
+
+.note-marker-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.note-marker {
+  position: absolute;
+  z-index: 4;
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+  outline: none;
+  pointer-events: auto;
+  background: url('../picture/备注提示.png') center / contain no-repeat;
+  transition: transform 120ms ease, filter 120ms ease;
+  overflow: visible;
+}
+
+.note-bubble {
+  display: block;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  max-width: min(360px, 70vw);
+  width: max-content;
+  min-width: 120px;
+  padding: 10px 14px;
+  border: 2px solid var(--text-deep-gray);
+  color: var(--text-deep-gray);
+  background: var(--page-bg);
+  box-shadow: 6px 6px 0 rgba(58, 58, 58, 0.16);
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px) scale(0.72);
+  transform-origin: 50% 100%;
+  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.2, 1, 0.2, 1);
+  white-space: pre-wrap;
+}
+
+.note-marker:hover,
+.note-marker:focus-visible {
+  transform: translate(-50%, -100%) scale(1.16);
+  filter: drop-shadow(4px 4px 0 rgba(58, 58, 58, 0.12));
+}
+
+.note-marker:hover .note-bubble,
+.note-marker:focus-visible .note-bubble {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
 }
 
 .reason-panel {
@@ -373,6 +432,33 @@ body[data-page='article'] .app-shell::before {
   align-self: center;
 }
 
+.schedule-item--done .schedule-name,
+.schedule-item--done .progress-label,
+.schedule-item--done .progress-date,
+.schedule-item--done .progress-content,
+.schedule-item--done .schedule-remark {
+  color: var(--text-light-gray);
+}
+
+.schedule-item--done .progress-beads::before,
+.schedule-item--done .progress-item::before {
+  background: var(--text-light-gray);
+}
+
+.schedule-item--done {
+  border-left-color: var(--text-light-gray);
+}
+
+.schedule-item--progress .progress-item.is-latest::before {
+  background: var(--status-green);
+  animation: bead-breathe 1.8s ease-out infinite;
+}
+
+.schedule-item--progress .progress-item.is-latest .progress-date,
+.schedule-item--progress .progress-item.is-latest .progress-content {
+  color: var(--status-green);
+}
+
 .essay-item {
   position: relative;
   display: grid;
@@ -409,9 +495,24 @@ body[data-page='article'] .app-shell::before {
 }
 
 .article-detail {
+  position: relative;
+  isolation: isolate;
   width: min(780px, 100%);
   margin: 0 auto;
   text-align: center;
+}
+
+.article-detail::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -34px;
+  bottom: -48px;
+  left: 50%;
+  width: min(900px, calc(100vw - 28px));
+  min-height: calc(100vh - 58px);
+  background: rgba(245, 237, 220, 0.5);
+  transform: translateX(-50%);
 }
 
 .article-title {
@@ -442,12 +543,28 @@ body[data-page='article'] .app-shell::before {
 }
 
 .article-body {
+  position: relative;
+  z-index: 1;
   margin-top: 34px;
   color: var(--text-deep-gray);
   font-size: 18px;
   line-height: 2;
   text-align: left;
   white-space: pre-wrap;
+}
+
+@keyframes bead-breathe {
+  0% {
+    box-shadow: 0 0 0 0 rgba(47, 154, 69, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 12px rgba(47, 154, 69, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(47, 154, 69, 0);
+  }
 }
 
 @media (max-width: 760px) {
