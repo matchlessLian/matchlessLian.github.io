@@ -11,7 +11,12 @@
     scheduleProgress: '进度展示',
     scheduleProgressContent: '完成内容',
     scheduleRemark: '规划备注',
-    essayTitle: '标题'
+    essayTitle: '标题',
+    name: '名字',
+    path: 'path',
+    scale: 'scale',
+    x: 'x',
+    y: 'y'
   };
 
   const state = {
@@ -45,6 +50,8 @@
       await initFeelFree();
     } else if (page === 'article') {
       await initArticle();
+    } else if (page === 'other') {
+      await initOther();
     }
   }
 
@@ -136,6 +143,164 @@
     const body = await loadText(`./article/${encodeURIComponent(title)}.txt`);
     renderArticleDetail(detail, article, body);
     document.title = title;
+  }
+
+  async function initOther() {
+    setText('[data-other-tab="yard"]', STRINGS.otherCloudYard);
+    setText('[data-other-tab="wishes"]', STRINGS.otherWishList);
+
+    const [plants, wishes] = await Promise.all([
+      loadJson('./data/MyPlants.json'),
+      loadJson('./data/Wishes.json')
+    ]);
+
+    renderCloudYard(
+      document.querySelector('[data-other-panel="yard"]'),
+      Array.isArray(plants) ? plants : []
+    );
+    renderWishList(
+      document.querySelector('[data-other-panel="wishes"]'),
+      Array.isArray(wishes) ? wishes : []
+    );
+
+    const buttons = document.querySelectorAll('[data-other-tab]');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => switchOtherPanel(button.dataset.otherTab));
+    });
+
+    switchOtherPanel('yard');
+  }
+
+  function switchOtherPanel(activeKey) {
+    document.querySelectorAll('[data-other-tab]').forEach((button) => {
+      button.classList.toggle('is-active', button.dataset.otherTab === activeKey);
+    });
+
+    document.querySelectorAll('[data-other-panel]').forEach((panel) => {
+      panel.classList.toggle('is-active', panel.dataset.otherPanel === activeKey);
+    });
+  }
+
+  function renderCloudYard(target, plants) {
+    if (!target) return;
+    target.innerHTML = '';
+
+    const stage = document.createElement('div');
+    stage.className = 'yard-stage';
+
+    for (const plant of plants) {
+      const item = document.createElement('div');
+      item.className = 'yard-plant';
+      item.style.left = `${Number(plant[FIELD.x]) || 0}px`;
+      item.style.top = `${Number(plant[FIELD.y]) || 0}px`;
+      item.style.setProperty('--plant-scale', String(Number(plant[FIELD.scale]) || 1));
+
+      const image = document.createElement('img');
+      image.className = 'yard-plant-image';
+      image.src = normalizeLocalPath(plant[FIELD.path] || '');
+      image.alt = plant[FIELD.name] || '';
+      item.appendChild(image);
+
+      const bubble = document.createElement('div');
+      bubble.className = 'info-bubble yard-bubble';
+
+      const name = document.createElement('div');
+      name.className = 'info-bubble-name';
+      name.textContent = plant[FIELD.name] || '';
+      bubble.appendChild(name);
+
+      const note = document.createElement('div');
+      note.className = 'info-bubble-note fz-font';
+      note.textContent = plant[FIELD.note] || '';
+      bubble.appendChild(note);
+
+      item.appendChild(bubble);
+      stage.appendChild(item);
+    }
+
+    const topLayer = document.createElement('img');
+    topLayer.className = 'yard-top-layer';
+    topLayer.src = './picture/其他背景图层2.png';
+    topLayer.alt = '';
+    stage.appendChild(topLayer);
+
+    target.appendChild(stage);
+  }
+
+  function renderWishList(target, wishes) {
+    if (!target) return;
+    target.innerHTML = '';
+
+    const blocksPerBoard = getMondrianBlocks(0).filter((block) => block.color !== 'white').length;
+    const boardCount = Math.max(1, Math.ceil(wishes.length / blocksPerBoard));
+
+    for (let boardIndex = 0; boardIndex < boardCount; boardIndex += 1) {
+      const canvas = document.createElement('div');
+      canvas.className = 'mondrian-board';
+      const blocks = getMondrianBlocks(boardIndex);
+      let wishCursor = boardIndex * blocksPerBoard;
+
+      blocks.forEach((block) => {
+        const tile = document.createElement('div');
+        tile.className = `mondrian-block mondrian-block--${block.color}`;
+        tile.style.gridColumn = block.column;
+        tile.style.gridRow = block.row;
+
+        if (block.color !== 'white' && wishes[wishCursor]) {
+          const wish = wishes[wishCursor];
+          wishCursor += 1;
+
+          const name = document.createElement('div');
+          name.className = 'mondrian-wish-name';
+          name.textContent = wish[FIELD.name] || '';
+          tile.appendChild(name);
+
+          const bubble = document.createElement('div');
+          bubble.className = 'info-bubble wish-bubble';
+          const note = document.createElement('div');
+          note.className = 'info-bubble-note fz-font';
+          note.textContent = wish[FIELD.note] || '';
+          bubble.appendChild(note);
+          tile.appendChild(bubble);
+        }
+
+        canvas.appendChild(tile);
+      });
+
+      target.appendChild(canvas);
+    }
+  }
+
+  function getMondrianBlocks(variant) {
+    const patterns = [
+      [
+      { color: 'white', column: '1 / 3', row: '1 / 3' },
+      { color: 'red', column: '3 / 7', row: '1 / 5' },
+      { color: 'yellow', column: '7 / 9', row: '1 / 2' },
+      { color: 'white', column: '7 / 9', row: '2 / 5' },
+      { color: 'blue', column: '1 / 3', row: '3 / 7' },
+      { color: 'white', column: '3 / 5', row: '5 / 7' },
+      { color: 'black', column: '5 / 7', row: '5 / 7' },
+      { color: 'yellow', column: '7 / 9', row: '5 / 8' },
+      { color: 'white', column: '1 / 5', row: '7 / 9' },
+      { color: 'red', column: '5 / 8', row: '7 / 9' },
+      { color: 'blue', column: '8 / 9', row: '8 / 9' }
+      ],
+      [
+      { color: 'yellow', column: '1 / 3', row: '1 / 2' },
+      { color: 'white', column: '3 / 6', row: '1 / 3' },
+      { color: 'blue', column: '6 / 9', row: '1 / 4' },
+      { color: 'red', column: '1 / 5', row: '2 / 6' },
+      { color: 'black', column: '5 / 6', row: '3 / 6' },
+      { color: 'white', column: '6 / 8', row: '4 / 7' },
+      { color: 'yellow', column: '8 / 9', row: '4 / 9' },
+      { color: 'white', column: '1 / 2', row: '6 / 9' },
+      { color: 'blue', column: '2 / 5', row: '6 / 9' },
+      { color: 'red', column: '5 / 8', row: '7 / 9' },
+      { color: 'white', column: '6 / 8', row: '6 / 7' }
+      ]
+    ];
+    return patterns[variant % patterns.length];
   }
 
   function renderScheduleList(target, entries) {
@@ -501,6 +666,12 @@
     if (node) {
       node.setAttribute(name, value);
     }
+  }
+
+  function normalizeLocalPath(path) {
+    if (!path) return '';
+    if (/^(https?:)?\/\//.test(path) || path.startsWith('./')) return path;
+    return `./${path}`;
   }
 
   function getMonthOptions(entries) {
