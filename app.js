@@ -15,6 +15,7 @@
     name: '名字',
     path: 'path',
     scale: 'scale',
+    floor: 'floor',
     x: 'x',
     y: 'y'
   };
@@ -188,9 +189,20 @@
     const stage = document.createElement('div');
     stage.className = 'yard-stage';
 
-    for (const plant of plants) {
+    renderPlantsByFloor(stage, plants, 2);
+    stage.appendChild(createYardLayer('./picture/[其他]页面-图层3-1.png', 'yard-layer yard-layer--three'));
+    renderPlantsByFloor(stage, plants, 4);
+    stage.appendChild(createYardLayer('./picture/[其他]页面-图层5-1.png', 'yard-layer yard-layer--five'));
+    stage.appendChild(createYardLayer('./picture/[其他]页面-图层5-2.png', 'yard-layer yard-layer--five'));
+    renderPlantsByFloor(stage, plants, 6);
+
+    target.appendChild(stage);
+  }
+
+  function renderPlantsByFloor(stage, plants, floor) {
+    for (const plant of plants.filter((item) => Number(item[FIELD.floor]) === floor)) {
       const item = document.createElement('div');
-      item.className = 'yard-plant';
+      item.className = `yard-plant yard-plant--floor-${floor}`;
       item.style.left = `${Number(plant[FIELD.x]) || 0}px`;
       item.style.top = `${Number(plant[FIELD.y]) || 0}px`;
       item.style.setProperty('--plant-scale', String(Number(plant[FIELD.scale]) || 1));
@@ -217,90 +229,91 @@
       item.appendChild(bubble);
       stage.appendChild(item);
     }
+  }
 
-    const topLayer = document.createElement('img');
-    topLayer.className = 'yard-top-layer';
-    topLayer.src = './picture/其他背景图层2.png';
-    topLayer.alt = '';
-    stage.appendChild(topLayer);
-
-    target.appendChild(stage);
+  function createYardLayer(src, className) {
+    const layer = document.createElement('img');
+    layer.className = className;
+    layer.src = src;
+    layer.alt = '';
+    return layer;
   }
 
   function renderWishList(target, wishes) {
     if (!target) return;
     target.innerHTML = '';
 
-    const blocksPerBoard = getMondrianBlocks(0).filter((block) => block.color !== 'white').length;
-    const boardCount = Math.max(1, Math.ceil(wishes.length / blocksPerBoard));
+    const canvas = document.createElement('div');
+    canvas.className = 'mondrian-board';
+    let wishCursor = 0;
 
-    for (let boardIndex = 0; boardIndex < boardCount; boardIndex += 1) {
-      const canvas = document.createElement('div');
-      canvas.className = 'mondrian-board';
-      const blocks = getMondrianBlocks(boardIndex);
-      let wishCursor = boardIndex * blocksPerBoard;
+    getMondrianBlocks().forEach((block) => {
+      const tile = document.createElement('div');
+      tile.className = `mondrian-block mondrian-block--${block.color}${block.content ? ' mondrian-block--content' : ''}`;
+      tile.style.gridColumn = block.column;
+      tile.style.gridRow = block.row;
 
-      blocks.forEach((block) => {
-        const tile = document.createElement('div');
-        tile.className = `mondrian-block mondrian-block--${block.color}`;
-        tile.style.gridColumn = block.column;
-        tile.style.gridRow = block.row;
+      if (block.content && wishes[wishCursor]) {
+        const wish = wishes[wishCursor];
+        wishCursor += 1;
 
-        if (block.color !== 'white' && wishes[wishCursor]) {
-          const wish = wishes[wishCursor];
-          wishCursor += 1;
+        const name = document.createElement('div');
+        name.className = 'mondrian-wish-name';
+        name.textContent = wish[FIELD.name] || '';
+        tile.appendChild(name);
 
-          const name = document.createElement('div');
-          name.className = 'mondrian-wish-name';
-          name.textContent = wish[FIELD.name] || '';
-          tile.appendChild(name);
+        const bubble = document.createElement('div');
+        bubble.className = 'info-bubble wish-bubble';
+        const note = document.createElement('div');
+        note.className = 'info-bubble-note fz-font';
+        note.textContent = wish[FIELD.note] || '';
+        bubble.appendChild(note);
+        tile.appendChild(bubble);
+      }
 
-          const bubble = document.createElement('div');
-          bubble.className = 'info-bubble wish-bubble';
-          const note = document.createElement('div');
-          note.className = 'info-bubble-note fz-font';
-          note.textContent = wish[FIELD.note] || '';
-          bubble.appendChild(note);
-          tile.appendChild(bubble);
-        }
+      canvas.appendChild(tile);
+    });
 
-        canvas.appendChild(tile);
-      });
-
-      target.appendChild(canvas);
-    }
+    target.appendChild(canvas);
   }
 
-  function getMondrianBlocks(variant) {
-    const patterns = [
-      [
-      { color: 'white', column: '1 / 3', row: '1 / 3' },
-      { color: 'red', column: '3 / 7', row: '1 / 5' },
-      { color: 'yellow', column: '7 / 9', row: '1 / 2' },
-      { color: 'white', column: '7 / 9', row: '2 / 5' },
-      { color: 'blue', column: '1 / 3', row: '3 / 7' },
-      { color: 'white', column: '3 / 5', row: '5 / 7' },
-      { color: 'black', column: '5 / 7', row: '5 / 7' },
-      { color: 'yellow', column: '7 / 9', row: '5 / 8' },
-      { color: 'white', column: '1 / 5', row: '7 / 9' },
-      { color: 'red', column: '5 / 8', row: '7 / 9' },
-      { color: 'blue', column: '8 / 9', row: '8 / 9' }
-      ],
-      [
-      { color: 'yellow', column: '1 / 3', row: '1 / 2' },
-      { color: 'white', column: '3 / 6', row: '1 / 3' },
-      { color: 'blue', column: '6 / 9', row: '1 / 4' },
-      { color: 'red', column: '1 / 5', row: '2 / 6' },
-      { color: 'black', column: '5 / 6', row: '3 / 6' },
-      { color: 'white', column: '6 / 8', row: '4 / 7' },
-      { color: 'yellow', column: '8 / 9', row: '4 / 9' },
-      { color: 'white', column: '1 / 2', row: '6 / 9' },
-      { color: 'blue', column: '2 / 5', row: '6 / 9' },
-      { color: 'red', column: '5 / 8', row: '7 / 9' },
-      { color: 'white', column: '6 / 8', row: '6 / 7' }
-      ]
+  function getMondrianBlocks() {
+    return [
+      { color: 'yellow', column: '1 / 2', row: '1 / 2' },
+      { color: 'white', column: '2 / 5', row: '1 / 2' },
+      { color: 'blue', column: '5 / 6', row: '1 / 3' },
+      { color: 'red', column: '1 / 4', row: '2 / 5', content: true },
+      { color: 'white', column: '4 / 5', row: '2 / 4' },
+      { color: 'white', column: '4 / 5', row: '4 / 5' },
+      { color: 'red', column: '6 / 9', row: '1 / 4', content: true },
+      { color: 'white', column: '9 / 11', row: '1 / 3' },
+      { color: 'blue', column: '10 / 11', row: '3 / 4' },
+      { color: 'white', column: '6 / 8', row: '4 / 6' },
+      { color: 'white', column: '8 / 10', row: '4 / 6' },
+      { color: 'yellow', column: '9 / 11', row: '5 / 6', content: true },
+      { color: 'red', column: '12 / 16', row: '1 / 5', content: true },
+      { color: 'white', column: '1 / 3', row: '6 / 7' },
+      { color: 'white', column: '3 / 7', row: '6 / 7' },
+      { color: 'yellow', column: '7 / 10', row: '6 / 7' },
+      { color: 'white', column: '1 / 2', row: '7 / 10' },
+      { color: 'red', column: '2 / 7', row: '7 / 12', content: true },
+      { color: 'black', column: '2 / 4', row: '12 / 14', content: true },
+      { color: 'white', column: '4 / 7', row: '12 / 13' },
+      { color: 'white', column: '4 / 7', row: '13 / 14' },
+      { color: 'yellow', column: '1 / 2', row: '12 / 16' },
+      { color: 'yellow', column: '7 / 10', row: '7 / 9', content: true },
+      { color: 'white', column: '7 / 8', row: '9 / 12' },
+      { color: 'white', column: '8 / 10', row: '9 / 12' },
+      { color: 'blue', column: '7 / 10', row: '14 / 16', content: true },
+      { color: 'red', column: '12 / 13', row: '6 / 7' },
+      { color: 'red', column: '12 / 13', row: '7 / 8' },
+      { color: 'white', column: '13 / 16', row: '6 / 10' },
+      { color: 'blue', column: '13 / 16', row: '10 / 11' },
+      { color: 'yellow', column: '15 / 16', row: '7 / 11' },
+      { color: 'yellow', column: '12 / 13', row: '12 / 13' },
+      { color: 'red', column: '13 / 16', row: '12 / 16', content: true },
+      { color: 'white', column: '12 / 13', row: '13 / 16' }
     ];
-    return patterns[variant % patterns.length];
   }
 
   function renderScheduleList(target, entries) {
