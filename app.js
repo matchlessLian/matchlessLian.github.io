@@ -149,6 +149,7 @@
   async function initOther() {
     setText('[data-other-tab="yard"]', STRINGS.otherCloudYard);
     setText('[data-other-tab="wishes"]', STRINGS.otherWishList);
+    setText('[data-other-tab="skills"]', STRINGS.otherSkillTree);
 
     const [plants, wishes] = await Promise.all([
       loadJson('./data/MyPlants.json'),

@@ -11,6 +11,8 @@ window.DISPLAY_STRINGS = {
   otherCloudYard: '云端后院',
   // 其他页面子页面：愿望李斯特。
   otherWishList: '愿望李斯特',
+  // 其他页面子页面： 个人技能树。
+  otherSkillTree: '个人技能树',
   // 首页图片替代文本：刷手机时间。
   phoneTitleAlt: '刷手机时间',
   // 首页图片替代文本：学习时间。
